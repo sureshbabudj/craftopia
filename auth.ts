@@ -1,6 +1,8 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
+import CredentailsProvider from "next-auth/providers/credentials";
 import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
@@ -11,6 +13,30 @@ export const {
   signOut,
 } = NextAuth({
   providers: [
+    CredentailsProvider({
+      name: "Credentials",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
+      },
+      authorize: async (credentials) => {
+        const user = await prisma.user.findUnique({
+          where: { email: credentials.email as string },
+        });
+
+        if (
+          user &&
+          bcrypt.compareSync(
+            credentials.password as string,
+            user.password as string
+          )
+        ) {
+          return { name: user.name, email: user.email };
+        } else {
+          throw new Error("Invalid email or password");
+        }
+      },
+    }),
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -37,6 +63,7 @@ export const {
           });
         }
       }
+
       return true;
     },
     async redirect({ url, baseUrl }) {

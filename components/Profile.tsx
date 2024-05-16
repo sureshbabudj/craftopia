@@ -1,18 +1,10 @@
-"use server";
-import { signIn } from "@/auth";
+import Link from "next/link";
 
 export default async function Profile() {
   return (
     <ul className="z-10">
       <li>
-        <button
-          onClick={async () => {
-            "use server";
-            await signIn("google");
-          }}
-        >
-          Sign in with Google
-        </button>
+        <Link href="/login">Login</Link>
       </li>
     </ul>
   );
