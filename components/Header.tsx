@@ -1,7 +1,24 @@
+import { auth } from "@/auth";
 import Logo from "./Logo";
-import { Nav } from "./Nav";
 
-export default function Header() {
+import { signOutAction } from "@/app/actions";
+import { Button } from "./ui/button";
+import Link from "next/link";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
+import { CreditCard, ListOrdered, LogOut, UserCircle2 } from "lucide-react";
+import { SignOut } from "./AuthComponents";
+
+export default async function Header() {
+  const session = await auth();
   return (
     <nav id="header" className="w-full z-30 top-0 py-1">
       <div className="w-full container mx-auto flex flex-wrap items-center justify-between mt-0 px-6 py-3">
@@ -49,8 +66,50 @@ export default function Header() {
           <Logo />
         </div>
 
-        <div className="order-2 md:order-3 flex items-center" id="nav-content">
-          <Nav />
+        <div
+          className="order-2 md:order-3 flex items-center justify-end"
+          id="nav-content"
+        >
+          {!session ? (
+            <Link href="/login">Login/Register</Link>
+          ) : (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline">
+                  <UserCircle2 className="mr-2" />
+                  {session?.user?.name}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="end">
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuGroup>
+                  <DropdownMenuItem>
+                    <span>Profile</span>
+                    <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <CreditCard className="mr-2 h-4 w-4" />
+                    <span>Orders</span>
+                    <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <ListOrdered className="mr-2 h-4 w-4" />
+                    <span>My Listing</span>
+                    <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator />
+                <SignOut>
+                  <DropdownMenuItem>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <button className="inline">Log out</button>
+                    <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+                  </DropdownMenuItem>
+                </SignOut>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </div>
       </div>
     </nav>

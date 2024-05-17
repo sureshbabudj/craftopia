@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 
-export function LoginForm() {
+export function LoginForm({ csrfToken }: any) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
@@ -27,6 +27,7 @@ export function LoginForm() {
     <div className="my-3">
       {message && <p>{message}</p>}
       <form onSubmit={handleSubmit} className="">
+        <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
         <div className="mb-4">
           <label
             className="block text-gray-700 text-sm font-bold mb-2"

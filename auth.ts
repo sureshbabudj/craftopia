@@ -12,6 +12,10 @@ export const {
   signIn,
   signOut,
 } = NextAuth({
+  pages: {
+    signIn: "/login",
+    newUser: "/register",
+  },
   providers: [
     CredentailsProvider({
       name: "Credentials",

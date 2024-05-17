@@ -2,8 +2,11 @@ import Logo from "@/components/Logo";
 import Link from "next/link";
 import { LoginForm } from "./LoginForm";
 import { SignInGithub, SignInGoogle } from "./SignIn";
+import { cookies } from "next/headers";
 
-export function RightPane() {
+export async function RightPane() {
+  const cookieStore = cookies();
+  const csrfTokenCookie = cookieStore.get("authjs.csrf-token");
   return (
     <div className="w-full bg-gray-100 lg:w-1/2 flex items-center justify-center">
       <div className="max-w-md w-full p-6">
@@ -21,7 +24,7 @@ export function RightPane() {
         <div className="mt-4 text-sm text-gray-600 text-center">
           <p>or with email</p>
         </div>
-        <LoginForm />
+        <LoginForm csrfToken={csrfTokenCookie?.value} />
         <div className="mt-4 text-sm text-gray-600 text-center">
           <p>
             Does not have an account?{" "}

@@ -11,10 +11,11 @@ import {
 
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import { signOutAction } from "@/app/actions";
+import { Button } from "./ui/button";
 
 export function Nav() {
   const { data: session, status, update } = useSession();
-  console.log({ session, status, update });
   return (
     <NavigationMenu>
       <NavigationMenuList>
@@ -82,7 +83,9 @@ export function Nav() {
                     <Link href="/profile">{session.user!.name}</Link>
                   </li>
                   <li className="mb-2">
-                    <Link href="/api/auth/signout">Logout</Link>
+                    <form action={signOutAction}>
+                      <Button type="submit">Signout</Button>
+                    </form>
                   </li>
                 </>
               )}

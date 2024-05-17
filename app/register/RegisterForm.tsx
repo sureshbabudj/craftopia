@@ -1,4 +1,5 @@
 "use client";
+import { signIn } from "next-auth/react";
 import { useState } from "react";
 
 export function SignUpForm() {
@@ -33,7 +34,16 @@ export function SignUpForm() {
       if (res.status === 201) {
         const result = await res.json();
         setMessage(`User created successfully: ${result.email}`);
-        // Reset form or redirect user as needed
+        const signInResult = await signIn("credentials", {
+          redirect: true,
+          email: formData.email,
+          password: formData.password,
+        });
+        if (signInResult?.error) {
+          setMessage(signInResult.error);
+        } else {
+          setMessage("You have successfully signed in!");
+        }
       } else {
         const error = await res.json();
         setMessage(error.message);
