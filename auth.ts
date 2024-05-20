@@ -14,6 +14,7 @@ export const {
 } = NextAuth({
   pages: {
     signIn: "/login",
+    error: "/login",
     newUser: "/register",
   },
   providers: [
@@ -35,9 +36,12 @@ export const {
             user.password as string
           )
         ) {
+          if (!user.emailVerified) {
+            return { error: "Email not verified" };
+          }
           return { name: user.name, email: user.email };
         } else {
-          throw new Error("Invalid email or password");
+          return { error: "Invalid email or password" };
         }
       },
     }),
@@ -63,8 +67,14 @@ export const {
             data: {
               name: String(user.name),
               email: String(user.email),
+              authProvider: "GOOGLE",
+              emailVerified: true,
             },
           });
+        }
+      } else if (account?.provider === "credentials") {
+        if ((user as any).error) {
+          throw new Error((user as any).error as string);
         }
       }
 

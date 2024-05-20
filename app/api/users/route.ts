@@ -1,7 +1,7 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, User } from "@prisma/client";
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import { signIn } from "@/auth";
+import nodemailer from "nodemailer";
 
 const prisma = new PrismaClient();
 
@@ -19,6 +19,56 @@ export async function GET() {
       { status: 500 }
     );
   }
+}
+
+export async function sendMail(sendTo: string, html: string) {
+  // Set up nodemailer transporter
+  const transporter = nodemailer.createTransport({
+    host: "smtp.mail.yahoo.com",
+    port: 587,
+    auth: {
+      user: process.env.YAHOO_MAIL_USERNAME,
+      pass: process.env.YAHOO_MAIL_PASSWORD,
+    },
+  });
+
+  // Send the email
+  await transporter.sendMail({
+    from: '"Craftopia" <sureshofcbe@yahoo.com>',
+    to: sendTo,
+    subject: "Verify your email",
+    html,
+  });
+}
+
+export async function generateToken(user: User) {
+  const salt = await bcrypt.genSalt();
+  return bcrypt.hashSync(`${user.email}${user.name}${salt}`, 10);
+}
+
+export async function sendVerificationEmail(user: User): Promise<string> {
+  // Generate a unique token for email verification
+  const token = await generateToken(user);
+  const link = `${process.env.HOST}/verify-user?token=${token}`;
+
+  // Save the token in the database with an expiration date
+  await prisma.user.update({
+    where: { email: user.email },
+    data: {
+      verificationToken: token,
+      verificationTokenExpiry: new Date(Date.now() + 24 * 60 * 60 * 1000),
+    },
+  });
+
+  await sendMail(
+    user.email,
+    `<h1>🎨 Craftopia</h1>
+      <h2>Please click this link to verify your email:</h2> 
+      <br /><br />
+      <p><a href="${link}">${link}</a></p>`
+  );
+
+  return link;
 }
 
 export async function POST(req: Request) {
@@ -57,6 +107,8 @@ export async function POST(req: Request) {
         password: encryptedPassword,
       },
     });
+
+    await sendVerificationEmail(newUser);
 
     return NextResponse.json(newUser, { status: 201, headers });
   } catch (error: any) {

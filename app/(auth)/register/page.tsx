@@ -1,14 +1,8 @@
 import React from "react";
-import { LeftPaneImage } from "./LeftPane";
+import { LeftPaneImage } from "../components/LeftPane";
 import { RightPane } from "./RightPane";
 
-export default async function Login({
-  params,
-  searchParams,
-}: {
-  params: { slug: string };
-  searchParams: { [key: string]: string | string[] | undefined };
-}) {
+export default async function Login() {
   return (
     <>
       {/* component */}
@@ -19,7 +13,6 @@ export default async function Login({
             <LeftPaneImage />
           </div>
         </div>
-        {/* Right Pane */}
         <RightPane />
       </div>
     </>
