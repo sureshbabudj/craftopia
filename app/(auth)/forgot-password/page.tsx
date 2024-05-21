@@ -1,4 +1,4 @@
-import { LeftPaneImage } from "../components/LeftPane";
+import { LeftPaneImage } from "../components/LeftPaneImage";
 import { RightPane } from "../login/RightPane";
 import { ForgotPasswordForm } from "./ForgotPasswordForm";
 

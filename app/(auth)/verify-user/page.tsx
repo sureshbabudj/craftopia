@@ -1,9 +1,10 @@
 import { Button } from "@/components/ui/button";
 import axios from "axios";
 import Link from "next/link";
-import { LeftPaneImage } from "../components/LeftPane";
+import { LeftPaneImage } from "../components/LeftPaneImage";
 import { RightPane } from "../login/RightPane";
 import { LogIn } from "lucide-react";
+import { LeftPane } from "../components/LeftPane";
 
 async function verifyUser(token: string): Promise<boolean> {
   try {
@@ -37,15 +38,8 @@ export default async function Verify({ searchParams }: any) {
   }
   return (
     <>
-      {/* component */}
       <div className="flex h-screen">
-        {/* Left Pane */}
-        <div className="hidden lg:flex items-center justify-center flex-1 bg-white text-black">
-          <div className="max-w-md text-center">
-            <LeftPaneImage />
-          </div>
-        </div>
-        {/* Right Pane */}
+        <LeftPane />
         <RightPane title="Verifying your Email!" subtitle="">
           <div className="text-center my-6">
             <>

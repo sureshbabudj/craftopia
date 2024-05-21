@@ -3,7 +3,7 @@
 import axios from "axios";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { LeftPaneImage } from "../components/LeftPane";
+import { LeftPane } from "../components/LeftPane";
 import { RightPane } from "../login/RightPane";
 import { ResetPasswordForm } from "./ResetPasswordForm";
 import { Button } from "@/components/ui/button";
@@ -33,15 +33,8 @@ export default async function Verify({ searchParams }: any) {
     await verifyForgotPasswordToken(token!);
   return (
     <>
-      {/* component */}
       <div className="flex h-screen">
-        {/* Left Pane */}
-        <div className="hidden lg:flex items-center justify-center flex-1 bg-white text-black">
-          <div className="max-w-md text-center">
-            <LeftPaneImage />
-          </div>
-        </div>
-        {/* Right Pane */}
+        <LeftPane />
         <RightPane title="Reset password" subtitle="">
           <>
             {isTokenValid && email ? (

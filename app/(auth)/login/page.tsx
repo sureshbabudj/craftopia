@@ -1,5 +1,5 @@
 import React from "react";
-import { LeftPaneImage } from "../components/LeftPane";
+import { LeftPaneImage } from "../components/LeftPaneImage";
 import { RightPane } from "./RightPane";
 import { LoginForm } from "./LoginForm";
 import { SignInGoogle, SignInGithub } from "./SignIn";
