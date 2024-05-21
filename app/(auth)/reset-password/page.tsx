@@ -4,7 +4,7 @@ import axios from "axios";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { LeftPane } from "../components/LeftPane";
-import { RightPane } from "../login/RightPane";
+import { RightPane } from "../components/RightPane";
 import { ResetPasswordForm } from "./ResetPasswordForm";
 import { Button } from "@/components/ui/button";
 

@@ -21,6 +21,7 @@ model User {
   verificationTokenExpiry DateTime?
   orders                  Order[]
   products                Product[]
+  forgotPasswordToken     String?   @unique
 }
 
 model Image {

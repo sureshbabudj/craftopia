@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import axios from "axios";
 import Link from "next/link";
 import { LeftPaneImage } from "../components/LeftPaneImage";
-import { RightPane } from "../login/RightPane";
+import { RightPane } from "../components/RightPane";
 import { LogIn } from "lucide-react";
 import { LeftPane } from "../components/LeftPane";
 

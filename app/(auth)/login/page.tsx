@@ -1,8 +1,8 @@
 import React from "react";
 import { LeftPaneImage } from "../components/LeftPaneImage";
-import { RightPane } from "./RightPane";
+import { RightPane } from "../components/RightPane";
 import { LoginForm } from "./LoginForm";
-import { SignInGoogle, SignInGithub } from "./SignIn";
+import { SignInGoogle, SignInGithub } from "../components/SignIn";
 import { cookies } from "next/headers";
 import Link from "next/link";
 

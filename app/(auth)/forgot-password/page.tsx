@@ -1,5 +1,5 @@
 import { LeftPaneImage } from "../components/LeftPaneImage";
-import { RightPane } from "../login/RightPane";
+import { RightPane } from "../components/RightPane";
 import { ForgotPasswordForm } from "./ForgotPasswordForm";
 
 export default async function ForgotPassword() {

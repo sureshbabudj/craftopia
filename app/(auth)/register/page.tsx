@@ -1,8 +1,8 @@
 import React from "react";
 
 import { LeftPane } from "../components/LeftPane";
-import { RightPane } from "../login/RightPane";
-import { SignInGoogle, SignInGithub } from "../login/SignIn";
+import { RightPane } from "../components/RightPane";
+import { SignInGoogle, SignInGithub } from "../components/SignIn";
 import { SignUpForm } from "./RegisterForm";
 import Link from "next/link";
 
