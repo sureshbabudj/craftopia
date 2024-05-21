@@ -1,29 +1,36 @@
+"use server";
+
 import axios from "axios";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { LeftPaneImage } from "../components/LeftPane";
 import { RightPane } from "../login/RightPane";
-import { SignInGoogle, SignInGithub } from "../login/SignIn";
+import { ResetPasswordForm } from "./ResetPasswordForm";
+import { Button } from "@/components/ui/button";
 
-async function verifyForgotPasswordToken(token: string): Promise<boolean> {
+async function verifyForgotPasswordToken(
+  token: string
+): Promise<{ verificationStatus: boolean; email?: string }> {
   try {
     const api = axios.create({
       baseURL: "http://localhost:8102",
       withCredentials: true, // Include credentials (cookies) in requests
     });
 
-    const url = `/api/users/verify/forgot-password?token=${token}`;
+    const url = `/api/users/forgot-password/verify?token=${token}`;
     const {
-      data: { verificationStatus },
+      data: { verificationStatus, email },
     } = await api.get(url);
-    return verificationStatus;
+    return { verificationStatus, email };
   } catch (error) {
-    return false;
+    return { verificationStatus: false };
   }
 }
 
 export default async function Verify({ searchParams }: any) {
-  const token = new URLSearchParams(searchParams).get("token");
-  const isTokenValid = await verifyForgotPasswordToken(token!);
+  const { token } = searchParams;
+  const { verificationStatus: isTokenValid, email } =
+    await verifyForgotPasswordToken(token!);
   return (
     <>
       {/* component */}
@@ -35,16 +42,25 @@ export default async function Verify({ searchParams }: any) {
           </div>
         </div>
         {/* Right Pane */}
-        <RightPane>
-          <>{isTokenValid ? <p>Super</p> : <p className="">Invalid token</p>}</>
-          <div className="mt-4 text-sm text-gray-600 text-center">
-            <p>
-              Does not have an account?{" "}
-              <Link href="/register" className="text-black hover:underline">
-                Register here
-              </Link>
-            </p>
-          </div>
+        <RightPane title="Reset password" subtitle="">
+          <>
+            {isTokenValid && email ? (
+              <ResetPasswordForm
+                email={email}
+                callback={async () => {
+                  "use server";
+                  redirect(`/login`);
+                }}
+              />
+            ) : (
+              <div className="text-center my-6">
+                <p className="text-3xl text-red-500">❌ Invalid Token ❗</p>
+                <Link href="/login" className="mt-8 block">
+                  <Button>Login</Button>
+                </Link>
+              </div>
+            )}
+          </>
         </RightPane>
       </div>
     </>

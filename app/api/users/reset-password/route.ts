@@ -1,46 +1,49 @@
 import { PrismaClient, User } from "@prisma/client";
 import { NextResponse } from "next/server";
+import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
-export async function verifyForgotPassword(token: string): Promise<boolean> {
-  const user = await prisma.user.findFirst({
-    where: {
-      forgotPasswordToken: token,
-    },
-  });
-
-  if (user) {
-    return true;
-  }
-
-  return false;
-}
-
-export async function GET(req: Request) {
+export async function POST(req: Request) {
   try {
-    const { searchParams } = new URL(req.url);
-    const token = searchParams.get("token");
-    if (!token) {
+    const request = await req.json();
+    const { email, password } = request;
+    if (!email || !password) {
       return NextResponse.json(
-        { message: "Token is required" },
+        { message: "Email and password are required" },
         { status: 400 }
       );
     }
-    const isVerified = await verifyForgotPassword(token);
-    if (!isVerified) {
-      return NextResponse.json({ message: "Invalid token" }, { status: 400 });
+
+    // Check if the user already exists
+    const existingUser = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!existingUser) {
+      return NextResponse.json(
+        { message: `The User bearing email ${email} does not exist` },
+        { status: 400 }
+      );
     }
+
+    // Encrypt the password
+    const encryptedPassword = bcrypt.hashSync(password, 10);
+
+    // Update the user
+    const { id, updatedAt, createdAt } = await prisma.user.update({
+      where: { email },
+      data: { password: encryptedPassword, forgotPasswordToken: null },
+    });
+
     return NextResponse.json(
-      { message: "forgot password request verified", verificationStatus: true },
+      { email, id, updatedAt, createdAt },
       { status: 200 }
     );
   } catch (error: any) {
     return NextResponse.json(
-      {
-        message: error.message ?? "Error verifying the forgot password request",
-      },
-      { status: 400 }
+      { message: error.message ?? "Error creating user" },
+      { status: 500 }
     );
   }
 }

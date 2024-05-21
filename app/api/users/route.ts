@@ -21,7 +21,15 @@ export async function GET() {
   }
 }
 
-export async function sendMail(sendTo: string, html: string) {
+export async function sendMail({
+  sendTo,
+  html,
+  subject,
+}: {
+  sendTo: string;
+  html: string;
+  subject: string;
+}) {
   // Set up nodemailer transporter
   const transporter = nodemailer.createTransport({
     host: "smtp.mail.yahoo.com",
@@ -36,7 +44,7 @@ export async function sendMail(sendTo: string, html: string) {
   await transporter.sendMail({
     from: '"Craftopia" <sureshofcbe@yahoo.com>',
     to: sendTo,
-    subject: "Verify your email",
+    subject,
     html,
   });
 }
@@ -60,13 +68,14 @@ export async function sendVerificationEmail(user: User): Promise<string> {
     },
   });
 
-  await sendMail(
-    user.email,
-    `<h1>🎨 Craftopia</h1>
+  await sendMail({
+    sendTo: user.email,
+    html: `<h1>🎨 Craftopia</h1>
       <h2>Please click this link to verify your email:</h2> 
       <br /><br />
-      <p><a href="${link}">${link}</a></p>`
-  );
+      <p><a href="${link}">${link}</a></p>`,
+    subject: "Verify your email",
+  });
 
   return link;
 }

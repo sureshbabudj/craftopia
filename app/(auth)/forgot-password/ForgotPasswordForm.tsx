@@ -1,28 +1,47 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import axios from "axios";
+import { Loader2 } from "lucide-react";
 import { useState } from "react";
 
 export function ForgotPasswordForm({ csrfToken }: any) {
+  const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState({ text: "", isErr: false });
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    setMessage("");
+    setLoading(true);
+    setMessage({ isErr: false, text: "" });
     try {
       await axios.post("/api/users/forgot-password", {
         email,
       });
 
-      setMessage("Password reset email sent.");
-    } catch (error) {
-      setMessage("Password reset can not  be process at this moment!");
+      setMessage({ isErr: false, text: "Password reset email sent." });
+      setLoading(false);
+    } catch (error: any) {
+      setMessage({
+        isErr: true,
+        text:
+          error?.response?.data?.message ??
+          "Password reset can not  be processed at this moment!",
+      });
+      setLoading(false);
     }
   };
 
   return (
     <div className="my-3">
-      {message && <p>{message}</p>}
+      {message.text && (
+        <>
+          {message.isErr ? (
+            <p className="my-5 text-center text-red-500">❌ {message.text}</p>
+          ) : (
+            <p className="my-5 text-center text-green-700">🚀 {message.text}</p>
+          )}
+        </>
+      )}
       <form onSubmit={handleSubmit} className="">
         <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
         <div className="mb-4">
@@ -44,12 +63,20 @@ export function ForgotPasswordForm({ csrfToken }: any) {
           />
         </div>
         <div className="flex items-center justify-between">
-          <button
+          <Button
+            disabled={loading}
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold w-full py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             type="submit"
           >
-            Submit
-          </button>
+            {loading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Please wait
+              </>
+            ) : (
+              "Submit"
+            )}
+          </Button>
         </div>
       </form>
     </div>

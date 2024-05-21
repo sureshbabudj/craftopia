@@ -1,4 +1,6 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
 import { signIn } from "next-auth/react";
 import { useState } from "react";
 
@@ -9,6 +11,7 @@ export function SignUpForm() {
     password: "",
   });
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e: any) => {
     const { name, value } = e.target;
@@ -21,6 +24,7 @@ export function SignUpForm() {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     setMessage("");
+    setLoading(true);
 
     try {
       const res = await fetch("/api/users", {
@@ -33,23 +37,17 @@ export function SignUpForm() {
 
       if (res.status === 201) {
         const result = await res.json();
-        setMessage(`User created successfully: ${result.email}`);
-        const signInResult = await signIn("credentials", {
-          redirect: true,
-          email: formData.email,
-          password: formData.password,
-        });
-        if (signInResult?.error) {
-          setMessage(signInResult.error);
-        } else {
-          setMessage("You have successfully signed in!");
-        }
+        setMessage(
+          `Please check your email ${result.email}' inbox to verify the email`
+        );
       } else {
         const error = await res.json();
         setMessage(error.message);
       }
+      setLoading(false);
     } catch (error) {
       setMessage("Failed to create user");
+      setLoading(false);
     }
   };
 
@@ -112,12 +110,20 @@ export function SignUpForm() {
           />
         </div>
         <div className="flex items-center justify-between">
-          <button
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold w-full py-2 px-3 rounded focus:outline-none focus:shadow-outline"
+          <Button
+            disabled={loading}
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold w-full py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             type="submit"
           >
-            Sign Up
-          </button>
+            {loading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Please wait
+              </>
+            ) : (
+              "Sign Up"
+            )}
+          </Button>
         </div>
       </form>
     </div>

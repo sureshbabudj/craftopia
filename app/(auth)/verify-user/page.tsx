@@ -1,8 +1,9 @@
-import Footer from "@/components/Footer";
-import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
 import Link from "next/link";
+import { LeftPaneImage } from "../components/LeftPane";
+import { RightPane } from "../login/RightPane";
+import { LogIn } from "lucide-react";
 
 async function verifyUser(token: string): Promise<boolean> {
   try {
@@ -22,26 +23,42 @@ async function verifyUser(token: string): Promise<boolean> {
 }
 
 export default async function Verify({ searchParams }: any) {
-  const token = new URLSearchParams(searchParams).get("token");
+  const { token } = searchParams;
   const isVerified = await verifyUser(token!);
-  let body = <p className="text-7xl text-red-500">Invalid Token</p>;
+  let body = <p className="text-3xl text-red-500">❌ Invalid Token ❗</p>;
   if (isVerified) {
     body = (
       <>
-        <p className="text-5xl text-green-700">
+        <p className="text-3xl text-green-700">
           🎊 Your email has been successfully verified! 🔓
         </p>
-        <Link href="/" className="mt-5 block">
-          <Button>Go to home</Button>
-        </Link>
       </>
     );
   }
   return (
-    <div className="flex flex-col justify-between items-center h-screen">
-      <Header />
-      <div className="container mx-auto my-5 text-center">{body}</div>
-      <Footer />
-    </div>
+    <>
+      {/* component */}
+      <div className="flex h-screen">
+        {/* Left Pane */}
+        <div className="hidden lg:flex items-center justify-center flex-1 bg-white text-black">
+          <div className="max-w-md text-center">
+            <LeftPaneImage />
+          </div>
+        </div>
+        {/* Right Pane */}
+        <RightPane title="Verifying your Email!" subtitle="">
+          <div className="text-center my-6">
+            <>
+              {body}
+              <Link href="/login" className="mt-8 block">
+                <Button>
+                  <LogIn className="mr-2 h-4 w-4" /> Login
+                </Button>
+              </Link>
+            </>
+          </div>
+        </RightPane>
+      </div>
+    </>
   );
 }
